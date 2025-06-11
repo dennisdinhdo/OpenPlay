@@ -37,6 +37,34 @@ def create_event(db: Session, event: schemas.EventCreate):
 
     return db_event
 
+def update_event(db: Session, event_id: int, data: schemas.EventUpdate, requester_id: int):
+    event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    if not event:
+        return None, "Event not found"
+    if event.creator_id != requester_id:
+        return None, "Unauthorized"
+    
+    for key, value in data.dict(exclude_unset=True).items():
+        if key == "required_positions":
+            setattr(event, key, ",".join(value)) # this will convert list to string
+        else:
+            setattr(event, key, value)
+
+    db.commit()
+    db.refresh(event)
+    return event, None
+
+def delete_event(db: Session, event_id: int, requester_id: int):
+    event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    if not event:
+        return None, "event not found"
+    if event.creator_id != requester_id:
+        return None, "Not authorized"
+    
+    db.delete(event)
+    db.commit()
+    return True, None
+
 def create_invite(db: Session, invite: schemas.InviteCreate):
     db_invite = models.EventInvite(**invite.dict())
     db.add(db_invite)

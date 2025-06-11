@@ -29,7 +29,7 @@ class Event(Base):
     required_positions = Column(String)  # comma-separated values
     creator_id = Column(Integer, ForeignKey("users.id"))
     is_public = Column(String, default="true")  # "true" or "false"
-
+    description = Column(String, nullable=True) 
 
     creator = relationship("User")
 

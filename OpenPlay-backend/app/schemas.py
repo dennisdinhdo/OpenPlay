@@ -38,6 +38,15 @@ class EventCreate(BaseModel):
     required_positions: List[str]
     creator_id: int
     is_public: Optional[str] = "true"
+    description: Optional[str] = None
+    
+class EventUpdate(BaseModel):
+    title: Optional[str]
+    location: Optional[str]
+    event_time: Optional[datetime]
+    required_positions: Optional[List[str]]
+    is_public: Optional[str]
+    description: Optional[str] = None
 
 class EventOut(BaseModel):
     id: int
@@ -47,6 +56,7 @@ class EventOut(BaseModel):
     required_positions: List[str]
     creator_id: int
     is_public: str
+    description: Optional[str] = None
 
     class Config:
         orm_mode = True
