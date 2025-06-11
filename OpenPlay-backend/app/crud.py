@@ -38,14 +38,32 @@ def create_event(db: Session, event: schemas.EventCreate):
     return db_event
 
 def create_invite(db: Session, invite: schemas.InviteCreate):
-    db_invite = models.Invite(**invite.dict())
+    db_invite = models.EventInvite(**invite.dict())
     db.add(db_invite)
     db.commit()
     db.refresh(db_invite)
     return db_invite
 
+def delete_event_invite(db: Session, invite_id: int, requester_id: int):
+    invite = db.query(models.EventInvite).filter(models.EventInvite.id == invite_id).first()
+
+    if not invite:
+        return None, "Invite not found"
+
+    event = db.query(models.Event).filter(models.Event.id == invite.event_id).first()
+    if not event:
+        return None, "Associated event not found"
+
+    if event.creator_id != requester_id:
+        return None, "Unauthorized: Only the event creator can uninvite users"
+
+    db.delete(invite)
+    db.commit()
+    return True, None
+
+
 def update_invite_status(db: Session, invite_id: int, status: str):
-    invite = db.query(models.Invite).filter(models.Invite.id == invite_id).first()
+    invite = db.query(models.EventInvite).filter(models.EventInvite.id == invite_id).first()
     if invite:
         invite.status = status
         db.commit()
@@ -53,5 +71,6 @@ def update_invite_status(db: Session, invite_id: int, status: str):
     return invite
 
 def get_invites_for_user(db: Session, user_id: int):
-    return db.query(models.Invite).filter(models.Invite.invited_user_id == user_id).all()
+    return db.query(models.EventInvite).filter(models.EventInvite.invited_user_id == user_id).all()
+
 
