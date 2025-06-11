@@ -22,9 +22,7 @@ def create_event(event: schemas.EventCreate, db: Session = Depends(get_db)):
 @router.get("/all", response_model=List[schemas.EventOut])
 def get_all_events(db: Session = Depends(get_db)):
     events = db.query(models.Event).all()
-    for e in events:
-        e.required_positions = e.required_positions.split(",") if e.required_positions else []
-    return events
+    return [schemas.EventOut.from_orm_with_local(e) for e in events]
 
 @router.get("/{event_id}/roster")
 def get_event_roster(event_id: int, user_id: int, db: Session = Depends(get_db)):

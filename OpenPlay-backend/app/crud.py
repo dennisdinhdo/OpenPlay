@@ -19,13 +19,17 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 def create_event(db: Session, event: schemas.EventCreate):
     positions_csv = ",".join(event.required_positions)
+    utc_time = event.to_utc()
+
     db_event = models.Event(
         title=event.title,
         location=event.location,
         event_time=event.event_time,
         required_positions=positions_csv,
         creator_id=event.creator_id,
-        is_public=event.is_public
+        is_public=event.is_public,
+        description=event.description,
+        timezone=event.timezone
     )
     db.add(db_event)
     db.commit()
