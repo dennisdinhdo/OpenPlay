@@ -55,3 +55,13 @@ def update_invite_status(db: Session, invite_id: int, status: str):
 def get_invites_for_user(db: Session, user_id: int):
     return db.query(models.Invite).filter(models.Invite.invited_user_id == user_id).all()
 
+def update_invite_status(db: Session, invite_id: int, status: str):
+    invite = db.query(models.Invite).filter(models.Invite.id == invite_id).first()
+    if not invite:
+        return None
+    invite.status = status
+    db.commit()
+    db.refresh(invite)
+    return invite
+
+

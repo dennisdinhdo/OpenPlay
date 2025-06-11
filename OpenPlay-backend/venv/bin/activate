@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/gogo/OpenPlay-backend/venv"
+VIRTUAL_ENV="/Users/gogo/OpenPlay/OpenPlay-backend/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
