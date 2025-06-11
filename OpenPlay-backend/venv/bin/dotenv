@@ -1,4 +1,4 @@
-#!/Users/gogo/OpenPlay-backend/venv/bin/python3.11
+#!/Users/gogo/OpenPlay/OpenPlay-backend/venv/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys
