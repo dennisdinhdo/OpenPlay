@@ -22,9 +22,7 @@ def create_event(event: schemas.EventCreate, db: Session = Depends(get_db)):
 @router.get("/all", response_model=List[schemas.EventOut])
 def get_all_events(db: Session = Depends(get_db)):
     events = db.query(models.Event).all()
-    for e in events:
-        e.required_positions = e.required_positions.split(",") if e.required_positions else []
-    return events
+    return [schemas.EventOut.from_orm_with_local(e) for e in events]
 
 @router.get("/{event_id}/roster")
 def get_event_roster(event_id: int, user_id: int, db: Session = Depends(get_db)):
@@ -59,3 +57,16 @@ def get_event_roster(event_id: int, user_id: int, db: Session = Depends(get_db))
         "roster": roster
     }
 
+@router.put("/{event_id}/update")
+def update_event(event_id: int, data: schemas.EventUpdate, requester_id: int, db: Session = Depends(get_db)):
+    updated_event, error = crud.update_event(db, event_id, data, requester_id)
+    if not updated_event:
+        return {"error": error}
+    return updated_event
+
+@router.delete("/{event_id}/delete")
+def delete_event(event_id: int, requester_id: int, db: Session = Depends(get_db)):
+    success, error = crud.delete_event(db, event_id, requester_id)
+    if not success:
+        return {"error": error}
+    return {"message": "Event deleted successfully"}
