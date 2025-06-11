@@ -32,17 +32,17 @@ def get_event_roster(event_id: int, user_id: int, db: Session = Depends(get_db))
     if not event:
         return {"error": "Event not found"}
 
-    # If private, only the creator or invited people can view
+    # Authorization for private events
     if event.is_public != "true":
         is_creator = event.creator_id == user_id
-        is_invited = db.query(models.Invite).filter(
-            models.Invite.event_id == event_id,
-            models.Invite.invited_user_id == user_id
+        is_invited = db.query(models.EventInvite).filter(
+            models.EventInvite.event_id == event_id,
+            models.EventInvite.invited_user_id == user_id
         ).first()
         if not (is_creator or is_invited):
             return {"error": "Unauthorized: This event is private"}
 
-    invites = db.query(models.Invite).filter(models.Invite.event_id == event_id).all()
+    invites = db.query(models.EventInvite).filter(models.EventInvite.event_id == event_id).all()
     roster = []
     for i in invites:
         user = db.query(models.User).filter(models.User.id == i.invited_user_id).first()
@@ -50,7 +50,7 @@ def get_event_roster(event_id: int, user_id: int, db: Session = Depends(get_db))
             "user_id": user.id,
             "username": user.username,
             "position": i.position,
-            "status": i.status
+            "status": i.status  # <-- this now reflects accepted/rejected/pending
         })
 
     return {
@@ -58,3 +58,4 @@ def get_event_roster(event_id: int, user_id: int, db: Session = Depends(get_db))
         "event_title": event.title,
         "roster": roster
     }
+
