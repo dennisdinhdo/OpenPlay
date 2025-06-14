@@ -18,6 +18,17 @@ class UserCreate(BaseModel):
     skill_level: Optional[str]
     preferred_position_1: Optional[str]
     preferred_position_2: Optional[str]
+    city: Optional[str]
+    state: Optional[str]
+
+class UserUpdate(BaseModel):
+    phone: Optional[str]
+    gender: Optional[str]
+    skill_level: Optional[str]
+    preferred_position_1: Optional[str]
+    preferred_position_2: Optional[str]
+    city: Optional[str]
+    state: Optional[str]
 
 class UserOut(BaseModel):
     id: int

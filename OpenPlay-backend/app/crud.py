@@ -17,6 +17,19 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.refresh(db_user)
     return db_user
 
+def update_user_profile(db: Session, user_id: int, updates: schemas.UserUpdate):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+
+    if not user:
+        return None, "User not found"
+    
+    for key, value in updates.dict(exclude_unset=True).items():
+        setattr(user, key, value)
+
+    db.commit()
+    db.refresh(user)
+    return user, None
+
 def create_event(db: Session, event: schemas.EventCreate):
     positions_csv = ",".join(event.required_positions)
     utc_time = event.to_utc()

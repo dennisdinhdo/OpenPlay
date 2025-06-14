@@ -18,6 +18,8 @@ class User(Base):
     skill_level = Column(String)  # e.g. beginner, intermediate, advanced
     preferred_position_1 = Column(String)
     preferred_position_2 = Column(String)
+    city = Column(String)
+    state = Column(String)
 
 class Event(Base):
     __tablename__ = "events"
